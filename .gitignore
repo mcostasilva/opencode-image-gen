@@ -1,0 +1,8 @@
+node_modules/
+*.tgz
+.DS_Store
+dist/
+
+# Local OpenCode development configuration and generated root-level images.
+/opencode.json
+/*.png

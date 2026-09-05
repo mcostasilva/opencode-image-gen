@@ -1,0 +1,11 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "plugins": [
+    {
+      "package": "/absolute/path/to/opencode-image-gen",
+      "options": {
+        "fallbackConnector": "openai"
+      }
+    }
+  ]
+}
