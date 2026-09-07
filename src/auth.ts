@@ -4,6 +4,24 @@ import type { CodexAuth } from "./types.ts"
 
 const ACCOUNT_CLAIM = "https://api.openai.com/auth"
 
+export const resolveXaiAuth = async (integration: Context["integration"]): Promise<{
+  bearer: string
+  billing: "subscription" | "api"
+}> => {
+  const connection = await integration.connection.active("xai")
+  const credential = connection ? await integration.connection.resolve(connection) : undefined
+  if (credential?.type === "oauth" && credential.access.trim()) {
+    return { bearer: credential.access, billing: "subscription" }
+  }
+  if (credential?.type === "key" && credential.key.trim()) {
+    return { bearer: credential.key, billing: "api" }
+  }
+  throw new ConnectorUnavailableError(
+    "xai",
+    "No active xAI connection. In OpenCode, run /connect and connect xAI with your SuperGrok subscription or an API key.",
+  )
+}
+
 const CONNECT_HINT =
   "No active OpenAI ChatGPT connection. In OpenCode, run /connect and sign in with ChatGPT."
 

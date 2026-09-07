@@ -21,7 +21,7 @@ const accessToken = (): string => {
   return `header.${payload}.signature`
 }
 
-test("uses the fallback connector and writes inside the session working directory", async () => {
+test("uses the connector pinned by the tool schema and writes inside the session working directory", async () => {
   const project = await mkdtemp(path.join(tmpdir(), "opencode-image-gen-"))
   const image = Buffer.from("generated image")
   const event = {
@@ -61,9 +61,8 @@ test("uses the fallback connector and writes inside the session working director
   const result = await runImageTool(
     ctx,
     tool,
-    { fallbackConnector: "openai" },
     "generate",
-    { prompt: "a test image", directory: "generated", file_name: "result.png" },
+    { connector: "openai", prompt: "a test image", directory: "generated", file_name: "result.png" },
   )
 
   expect(result.output).toBeUndefined()

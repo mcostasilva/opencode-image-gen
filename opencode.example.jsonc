@@ -4,6 +4,8 @@
     {
       "package": "/absolute/path/to/opencode-image-gen",
       "options": {
+        // Use "xai" for Grok Imagine via an xAI API key configured with /connect.
+        // The current session's supported connector takes precedence over this fallback.
         "fallbackConnector": "openai"
       }
     }

@@ -1,4 +1,4 @@
-export const CONNECTOR_IDS = ["openai"] as const
+export const CONNECTOR_IDS = ["openai", "xai"] as const
 
 export type ConnectorId = (typeof CONNECTOR_IDS)[number]
 

@@ -1,7 +1,7 @@
 {
   "name": "opencode-image-gen",
   "version": "0.1.0",
-  "description": "OpenCode V2 plugin for GPT Image generation through ChatGPT/Codex OAuth.",
+  "description": "OpenCode V2 plugin for GPT Image via ChatGPT/Codex OAuth and Grok Imagine via the xAI API.",
   "author": "Marcio Costa Silva",
   "repository": {
     "type": "git",
@@ -18,7 +18,9 @@
     "image-generation",
     "openai",
     "chatgpt",
-    "codex"
+    "codex",
+    "xai",
+    "grok-imagine"
   ],
   "license": "MIT",
   "type": "module",
@@ -39,7 +41,8 @@
     "test": "bun test"
   },
   "dependencies": {
-    "@opencode-ai/plugin": "0.0.0-beta-19151"
+    "@opencode-ai/plugin": "0.0.0-beta-19151",
+    "sharp": "^0.35.4"
   },
   "devDependencies": {
     "@types/bun": "1.4.1",

@@ -91,15 +91,6 @@ const asRecord = (value: unknown): Record<string, unknown> | undefined =>
     ? (value as Record<string, unknown>)
     : undefined
 
-const eventMessage = (event: Record<string, unknown>): string => {
-  if (typeof event.message === "string" && event.message.trim()) return event.message
-  if (typeof event.code === "string" && event.code.trim()) return event.code
-  const response = asRecord(event.response)
-  const error = response ? asRecord(response.error) : undefined
-  if (error && typeof error.message === "string" && error.message.trim()) return error.message
-  return "Codex image generation failed."
-}
-
 export const parseCodexImageResponse = (body: string): GeneratedImage => {
   const frames = body.replaceAll("\r\n", "\n").split("\n\n")
   const events: Record<string, unknown>[] = []
@@ -116,22 +107,34 @@ export const parseCodexImageResponse = (body: string): GeneratedImage => {
     }
   }
 
-  const failed = events.find((event) => event.type === "error" || event.type === "response.failed")
+  // Preserve the upstream payload rather than replacing refusals, incomplete
+  // responses, or tool failures with a guessed explanation.
+  const fail = (message: string): never => {
+    throw new Error(`${message}\n${body}`)
+  }
+  const failed = events.find((event) =>
+    event.type === "error" || event.type === "response.failed" || event.type === "response.incomplete" ||
+    asRecord(event.response)?.status === "failed" || asRecord(event.response)?.status === "incomplete",
+  )
   if (failed) {
-    throw new Error(eventMessage(failed))
+    fail("Codex image generation failed:")
   }
 
-  const item = events
-    .map((event) => (event.type === "response.output_item.done" ? asRecord(event.item) : undefined))
-    .find((value) => value?.type === "image_generation_call")
+  const items = events.flatMap((event) => {
+    if (event.type === "response.output_item.done") return [asRecord(event.item)]
+    if (event.type !== "response.completed") return []
+    const output = asRecord(event.response)?.output
+    return Array.isArray(output) ? output.map(asRecord) : []
+  }).filter((value) => value?.type === "image_generation_call")
+  const item = items.find((value) => typeof value?.result === "string" && value.result.length > 0) ?? items[0]
 
   if (!item) {
-    throw new Error("Codex returned no image generation result.")
+    return fail("Codex returned no image generation result. Upstream response:")
   }
 
   const base64 = item.result
   if (typeof base64 !== "string" || base64.length === 0) {
-    throw new Error("Codex returned an image without image data.")
+    return fail("Codex returned an image without image data. Upstream response:")
   }
 
   const id = typeof item.id === "string" && item.id.length > 0 ? item.id : crypto.randomUUID()
@@ -166,7 +169,7 @@ export const generateWithCodex = async (
 
   const body = await response.text()
   if (!response.ok) {
-    throw new Error(`Codex image request failed (${response.status}): ${body.slice(0, 500)}`)
+    throw new Error(`Codex image request failed (${response.status}): ${body}`)
   }
 
   return parseCodexImageResponse(body)

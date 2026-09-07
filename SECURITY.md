@@ -12,6 +12,6 @@ Include the affected version, impact, and minimal reproduction details. Never in
 
 ## Credential handling
 
-The plugin resolves credentials through OpenCode's integration API. It does not read OpenCode's credential files directly and must never log or return OAuth tokens. The OpenAI connector sends the resolved token only to ChatGPT's Codex backend.
+The plugin resolves credentials through OpenCode's integration API. It does not read OpenCode's credential files directly or add credentials to tool output. The OpenAI connector sends the resolved token only to ChatGPT's Codex backend. The xAI connector sends its resolved OAuth access token or API key only to `https://api.x.ai`. Provider error bodies are returned verbatim to the model for diagnosis.
 
-This plugin uses an unofficial endpoint that may change without notice. Review the source and OpenAI's policies before use.
+The OpenAI connector uses an unofficial endpoint that may change without notice. The xAI connector uses the official Imagine API. Review the source and the selected provider's policies before use.
