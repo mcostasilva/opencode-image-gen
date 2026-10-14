@@ -1,10 +1,11 @@
-import { Plugin } from "@opencode-ai/plugin"
+import type { Plugin } from "@opencode-ai/plugin/promise/plugin"
 import { parsePluginConfig } from "./config.ts"
 import { editImageInput, generateImageInput } from "./schema.ts"
 import { runImageTool } from "./run.ts"
 import { prepareImageTools } from "./tool-context.ts"
 
-export default Plugin.define({
+// Keep SDK imports type-only: the host supplies its own Effect runtime.
+export default {
   id: "opencode-image-gen",
   async setup(ctx) {
     const config = parsePluginConfig(ctx.options)
@@ -29,4 +30,4 @@ export default Plugin.define({
     })
     await ctx.session.hook("context", (event) => prepareImageTools(ctx.integration, config, event))
   },
-})
+} satisfies Plugin

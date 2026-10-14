@@ -16,6 +16,11 @@ OpenCode V2 plugin that adds `generate_image` and `edit_image` tools through **O
   - **OpenAI:** ChatGPT (Plus / Pro / Business) OAuth with a plan that includes Codex image generation; platform API keys are not supported by this connector.
   - **xAI:** a SuperGrok OAuth connection with Imagine access, or an API key with access to Grok Imagine and available API credits.
 
+The plugin uses the OpenCode SDK only for development-time types. Its runtime
+entrypoint exports a plain plugin definition without importing SDK schemas or
+Effect, avoiding initialization failures when the host's Effect version differs
+from the development SDK (such as `Schema.isStartsWith is not a function`).
+
 ## Install from GitHub
 
 Add the GitHub package to `plugins` in `~/.config/opencode/opencode.jsonc` or a project `opencode.jsonc`:
