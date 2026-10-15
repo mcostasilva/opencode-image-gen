@@ -1,7 +1,8 @@
 import type { CodexAuth, GeneratedImage, ImageAction, ImageOptions } from "./types.ts"
 
 export const CODEX_RESPONSES_URL = "https://chatgpt.com/backend-api/codex/responses"
-export const RESPONSE_MODEL = "gpt-5.5"
+// The dispatcher must support ChatGPT/Codex OAuth, independently of the image model.
+export const RESPONSE_MODEL = "gpt-6.1-sol"
 export const IMAGE_MODEL = "gpt-image-2"
 export const ORIGINATOR = "opencode-image-gen"
 
